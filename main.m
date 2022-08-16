@@ -11,11 +11,13 @@ theta0    = pi/2;
 %% Building the scatterer 
 % plot_flag = 1;
 %[X, Y] = structure(N,lambda,radius,plot_flag);
-N         = 50;
+N         = 10;
 radius    = 0.3*lambda;
-circumfer = 2*pi*radius;
-l         = circumfer/N; %length of each segment
-test_pts  = linspace(0,)
+l         = 2*pi*radius/N; %length of each segment
+step      = l;
+test_pts  = 0:step:2*pi-step/2;
+scatter(radius*cos(test_pts),radius*sin(test_pts),'k','filled');
+grid on; axis('equal');
 
 
 
