@@ -46,7 +46,10 @@ end
 %% Functions
 
 %% green function
-function g = green(r,rp,k)
-    g = (-1j/4)*besselh(0,2,k*rho)
+function g = green(k,rho)
+    g = (-1j/4)*besselh(0,2,k*rho);
 end
 %% grad_green
+function grad_g = gradg(k,rho)
+    grad_g = (-1j/4)*besselh(0,2,k*rho);
+end

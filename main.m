@@ -8,6 +8,7 @@ k2        = k1*sqrt(epsilonr);
 phi0      = 0; %incident angle
 theta0    = pi/2;
 E0        = 1; %incident field amplitude
+gamma     = 0.577; %for hankel fun approximation
 
 %% Building the scatterer 
 % plot_flag = 1;
@@ -17,7 +18,7 @@ radius     = 0.3*lambda;
 circum     = 2*pi*radius;
 l          = circum/N; %length of each segment
 step       = 2*pi/N; %angle measure of each segment
-nodes = 0:step:2*pi-step; %nodes of each segment
+nodes      = 0:step:2*pi-step; %nodes of each segment
 test_pts   = step/2 : step : 2*pi-step/2; %testing points which are choosen as the center of each segment
 % scatter(radius*cos(nodes),radius*sin(nodes),'k','filled');
 % hold on; grid on; axis('equal');pause(2)
@@ -35,9 +36,21 @@ Ei = E0 * exp(-1i * k1 * alpha);     %incident electric field
 %defining 'c' vector
 c = [Ei zeros(1,N)];
 %creating the 'A' matrix
-for i = 1:2*N
-    for j = 1:2*N
-        
+gdiag = @(k) -1j/4*(l - k^2*l^3/48 - 1j*(2*l/pi*(log(l*k/(4*exp(1)))+gamma)));
+for i = 1:N
+    rp = [radius*cos(test_pts(i)) radius*sin(test_pts(i))];
+    for j = 1:N
+        r    = [radius*cos(test_pts(j)) radius*sin(test_pts(j))];
+        nhat = [cos(test_pts(j)) sin(test_pts(j))];
+        if i == j
+            A(i,j)     = gdiag(k1);
+            A(i,j+N)   = 1/2;
+
+            A(i+N,j)   = gdiag(k2);
+            A(i+N,j+N) = -1/2;
+        else
+            A(i,j)     = integral(@(r) green(k1)) 
+        end
     end
 end
 
@@ -46,8 +59,10 @@ end
 %% Functions
 
 %% green function
-function g = green(r,rp,k)
-    rho = 
+function g = green(k,rho)
     g = (-1j/4)*besselh(0,2,k*rho);
 end
 %% grad_green
+function grad_g = gradg(k,rho)
+    grad_g = (1j*k/4)*besselh(1,2,k*rho);
+end
