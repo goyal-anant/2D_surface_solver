@@ -1,4 +1,4 @@
-clc; clear all; close all;
+clc; clear; close all;
 
 %% Defining constants
 lambda    = 1;
@@ -35,13 +35,16 @@ alpha = (X1 * sin(theta0) * cos(phi0)) + (Y1 * sin(theta0) * sin(phi0));
 Ei = E0 * exp(-1i * k1 * alpha);     %incident electric field 
 %defining 'c' vector
 c = [Ei zeros(1,N)];
-%creating the 'A' matrix
+%creating the 'A' matrix, i.e., A = [U V; W X]
 gdiag = @(k) -1j/4*(l - k^2*l^3/48 - 1j*(2*l/pi*(log(l*k/(4*exp(1)))+gamma)));
 for i = 1:N
     rp = [radius*cos(test_pts(i)) radius*sin(test_pts(i))];
     for j = 1:N
-        r    = [radius*cos(test_pts(j)) radius*sin(test_pts(j))];
-        nhat = [cos(test_pts(j)) sin(test_pts(j))];
+        r_vals = [radius*cos(test_pts(j)) radius*sin(test_pts(j))];
+        nhat   = [cos(test_pts(j)) sin(test_pts(j))];
+        node_l = [radius*cos(test_pts(j) - (step/2)) radius*sin(test_pts(j) - (step/2))];
+        node_u = [radius*cos(test_pts(j) + (step/2)) radius*sin(test_pts(j) + (step/2))];
+        rho    = @(r) norm(r - rp);
         if i == j
             A(i,j)     = gdiag(k1);
             A(i,j+N)   = 1/2;
@@ -49,20 +52,24 @@ for i = 1:N
             A(i+N,j)   = gdiag(k2);
             A(i+N,j+N) = -1/2;
         else
-            A(i,j)     = integral(@(r) green(k1)) 
+            A(i,j)     = integral(@(r) green(k1,rho),node_l,node_u);
+            A(i,j+N)   = integral(@(r) gradg(k1,rho,nhat),node_l,node_u);
+
+            A(i+N,j)   = integral(@(r) green(k2,rho),node_l,node_u);
+            A(i+N,j+N) = integral(@(r) gradg(k2,rho,nhat),node_l,node_u);
         end
     end
 end
 
 %% Plotting the result
 
-%% Functions
-
-%% green function
+%% function definitions
+%%green function
 function g = green(k,rho)
     g = (-1j/4)*besselh(0,2,k*rho);
 end
-%% grad_green
-function grad_g = gradg(k,rho)
-    grad_g = (1j*k/4)*besselh(1,2,k*rho);
+
+%%grad_green
+function gg = gradg(k,rho,nhat)
+    gg = (1j*k/4)*besselh(1,2,k*rho)' * nhat;
 end
