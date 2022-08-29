@@ -52,17 +52,17 @@ for i = 1:N
             A(i+N,j)   = gdiag(k2);
             A(i+N,j+N) = -1/2;
         else
-            g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k1);
-            A(i,j)     = integral(g,0,1,'ArrayValued',true);
+%             g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k1);
+              A(i,j)     = integral(@(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k1),0,1,'ArrayValued',true);
 
-            gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k1);
-            A(i,j+N)   = integral(gg,0,1,'ArrayValued',true);
+%             gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k1);
+%             A(i,j+N)   = integral(gg,0,1);
 
-            g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k2);
-            A(i+N,j)   = integral(g,0,1,'ArrayValued',true);
+%             g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k2);
+%             A(i+N,j)   = integral(g,0,1);
 
-            gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k2);
-            A(i+N,j+N) = integral(gg,0,1,'ArrayValued',true);
+%             gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k2);
+%             A(i+N,j+N) = integral(gg,0,1);
         end
     end
 end
