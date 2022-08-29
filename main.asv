@@ -1,5 +1,5 @@
-clc; clear;
-tic
+clear;
+
 %% Defining constants
 lambda    = 1;
 epsilonr  = 4;
@@ -32,7 +32,7 @@ test_pts   = step/2 : step : 2*pi-step/2; %testing points which are choosen as t
 X1 = radius*cos(test_pts);
 Y1 = radius*sin(test_pts);
 alpha = (X1 * sin(theta0) * cos(phi0)) + (Y1 * sin(theta0) * sin(phi0));
-Ei = E0 * exp(-1i * k1 * alpha);     %incident electric field 
+Ei = E0 * 1.25 * exp(-1i * k1 * alpha);     %incident electric field 
 
 %defining 'c' vector
 c = [Ei zeros(1,N)];
@@ -101,7 +101,12 @@ end
 % phi = linspace(0,200,length(farfield));
 % plot(phi,abs(farfield));
 % grid on; 
-polarplot(onodes, -20*log10(2*pi*oradius*abs(farfield)));
+
+%calling the volume_disk script for comparison
+volume_disk
+
+s = polarplot(onodes, -20*log10(2*pi*oradius*abs(farfield)),'blue');
+set(s,'LineWidth',3);
 
 
 %% function definitions
