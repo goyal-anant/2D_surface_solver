@@ -122,6 +122,7 @@ Wphi = (k*pi^2) * t2 / t3';
 % AxesH = axes('XTick',0:10:200, 'NextPlot', 'add');
 % plot(phi*180/pi,Wphi,'linewidth',3);
 polarplot(phi,20*log10(2*pi*rho0*abs(Es)));
+hold on;
 % hold on; grid on; set(gca,'fontsize',20)
 % xlabel('\phi(degrees)');
 % ylabel('Echo width/ Wavelength');
