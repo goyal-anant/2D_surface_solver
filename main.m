@@ -40,7 +40,7 @@ c = [Ei zeros(1,N)];
 %creating the 'A' matrix, i.e., A = [U V; W X]
 A = zeros(2*N,2*N);
 gdiag = @(k) -1j/4*(l - k^2*l^3/48 - 1j*(2*l/pi*(log(l*k/(4*exp(1)))+gamma)));
-% syms t
+% syms m
 for i = 1:N
     rpnl = [radius*cos(test_pts(i) - (step/2)) radius*sin(test_pts(i) - (step/2))];
     rpnu = [radius*cos(test_pts(i) + (step/2)) radius*sin(test_pts(i) + (step/2))];
@@ -54,16 +54,16 @@ for i = 1:N
             A(i+N,j)   = gdiag(k2);
             A(i+N,j+N) = -1/2;
         else
-            g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k1);
+            g          = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
             A(i,j)     = l * integral(g,0,1,'ArrayValued',true);
 
-            gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k1);
+            gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
             A(i,j+N)   = -l * integral(gg,0,1,'ArrayValued',true);
 
-            g          = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k2);
+            g          = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
             A(i+N,j)   = l * integral(g,0,1,'ArrayValued',true);
 
-            gg         = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k2);
+            gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
             A(i+N,j+N) = -l * integral(gg,0,1,'ArrayValued',true);
         end
     end
@@ -88,8 +88,8 @@ for i = 1:oN
         nhat = [cos(test_pts(j)) sin(test_pts(j))];
 
 
-        g  = @(t) green(rpnl,rpnu,0.5,rnl,rnu,t,k1);
-        gg = @(t) gradg(rpnl,rpnu,0.5,rnl,rnu,t,nhat,k1);
+        g  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
+        gg = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
 
         farfield(i) = farfield(i) - l * (x(j) * integral(g,0,1,"ArrayValued",true) - ...
             x(j+N) * integral(gg,0,1,"ArrayValued",true));
@@ -111,17 +111,17 @@ set(s,'LineWidth',3);
 
 %% function definitions
 %%green function
-function g = green(rpnl,rpnu,s,rnl,rnu,t,k)
-    rps = ((1-s).*rpnl) + (s.*rpnu);
-    rt  = ((1-t).*rnl)  + (t.*rnu);
+function g = green(rpnl,rpnu,n,rnl,rnu,m,k)
+    rps = ((1-n).*rpnl) + (n.*rpnu);
+    rt  = ((1-m).*rnl)  + (m.*rnu);
     rho = norm(rt-rps);
     g   = (-1j/4) * besselh(0,2,k.*rho);
 end
 
 %%grad_green
-function gg = gradg(rpnl,rpnu,s,rnl,rnu,t,nhat,k)
-    rps  = ((1-s).*rpnl) + (s.*rpnu);
-    rt   = ((1-t).*rnl)  + (t.*rnu);
+function gg = gradg(rpnl,rpnu,n,rnl,rnu,m,nhat,k)
+    rps  = ((1-n).*rpnl) + (m.*rpnu);
+    rt   = ((1-n).*rnl)  + (m.*rnu);
     rho  = norm(rt-rps);
     rhat = (rt-rps)./rho;
     gg   = (1j*k/4) * besselh(1,2,k.*rho) .* dot(rhat,nhat);
