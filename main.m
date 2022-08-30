@@ -32,7 +32,7 @@ test_pts   = step/2 : step : 2*pi-step/2; %testing points which are choosen as t
 X1 = radius*cos(test_pts);
 Y1 = radius*sin(test_pts);
 alpha = (X1 * sin(theta0) * cos(phi0)) + (Y1 * sin(theta0) * sin(phi0));
-Ei = E0 * 1.25 * exp(-1i * k1 * alpha);     %incident electric field 
+Ei = E0 * exp(-1i * k1 * alpha)*1.25;     %incident electric field 
 
 %defining 'c' vector
 c = [Ei zeros(1,N)];
@@ -107,7 +107,9 @@ volume_disk
 
 s = polarplot(onodes, -20*log10(2*pi*oradius*abs(farfield)),'blue');
 set(s,'LineWidth',3);
-
+legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
+ax = gca; 
+ax.FontSize = 25; 
 
 %% function definitions
 %%green function
@@ -120,8 +122,8 @@ end
 
 %%grad_green
 function gg = gradg(rpnl,rpnu,n,rnl,rnu,m,nhat,k)
-    rps  = ((1-n).*rpnl) + (m.*rpnu);
-    rt   = ((1-n).*rnl)  + (m.*rnu);
+    rps  = ((1-n).*rpnl) + (n.*rpnu);
+    rt   = ((1-m).*rnl)  + (m.*rnu);
     rho  = norm(rt-rps);
     rhat = (rt-rps)./rho;
     gg   = (1j*k/4) * besselh(1,2,k.*rho) .* dot(rhat,nhat);
