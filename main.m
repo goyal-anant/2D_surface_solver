@@ -1,5 +1,5 @@
 clear;
-
+tic
 %% Defining constants
 lambda    = 1;
 epsilonr  = 4;
@@ -110,7 +110,7 @@ set(s,'LineWidth',3);
 legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
 ax = gca; 
 ax.FontSize = 25; 
-
+toc
 %% function definitions
 %%green function
 function g = green(rpnl,rpnu,n,rnl,rnu,m,k)
