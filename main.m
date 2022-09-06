@@ -9,7 +9,7 @@ phi0      = 0; %incident angle
 theta0    = pi/2;
 E0        = 1; %incident field amplitude
 gamma     = 0.577; %for hankel fun approximation
-n         = 2;%for gaussquad
+n         = 2; %for gaussquad
 
 %% Building the scatterer 
 % plot_flag = 1;
@@ -61,15 +61,15 @@ for i = 1:N
 
             gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
 %             A(i,j+N)   = -l * integral(gg,0,1,'ArrayValued',true);
-            A(i,j)     = -l * gaussquad(gg,n);
+            A(i,j+N)     = -l * gaussquad(gg,n);
 
             g          = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
 %             A(i+N,j)   = l * integral(g,0,1,'ArrayValued',true);
-            A(i,j)     = l * gaussquad(g,n);
+            A(i+N,j)     = l * gaussquad(g,n);
 
             gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
 %             A(i+N,j+N) = -l * integral(gg,0,1,'ArrayValued',true);
-            A(i,j)     = -l * gaussquad(gg,n);
+            A(i+N,j+N)     = -l * gaussquad(gg,n);
         end
     end
 end
@@ -112,12 +112,13 @@ end
 %calling the volume_disk script for comparison
 volume_disk
 
-s = polarplot(onodes,20*log10(2*pi*oradius*abs(farfield)),'blue');
+s = polarplot(onodes,-20*log10(2*pi*oradius*abs(farfield)),'blue');
 set(s,'LineWidth',3);
 legend({' VIE',' SIE'},'Location','northeast','Orientation','vertical')
 ax = gca; 
 ax.FontSize = 25; 
 toc
+
 %% function definitions
 %%green function
 function g = green(rpnl,rpnu,n,rnl,rnu,m,k)
@@ -138,11 +139,12 @@ end
 
 %%gauss quadrature
 function y = gaussquad(f,n)
-    wt = zeros(n,1); xi = wt;
+    wt = zeros(n,1);
+    xi = zeros(n,1);
     if n == 1
         wt(1)  = 1; 
         xi(1) = 1;
-    elseif n ==2
+    elseif n == 2
         xi(1) = (1-1/sqrt(3))/2;
         xi(2) = (1+1/sqrt(3))/2;
         wt(1) = 0.5;
