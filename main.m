@@ -9,6 +9,8 @@ phi0      = 0; %incident angle
 theta0    = pi/2;
 E0        = 1; %incident field amplitude
 gamma     = 0.577; %for hankel fun approximation
+relatol    = 1e-1;
+absatol    = 1e-1;
 
 %% Building the scatterer 
 % plot_flag = 1;
@@ -55,16 +57,16 @@ for i = 1:N
             A(i+N,j+N) = -1/2;
         else
             g          = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
-            A(i,j)     = l * integral(g,0,1,'ArrayValued',true);
+            A(i,j)     = l * integral(g,0,1,'ArrayValued',true,'RelTol',relatol,'AbsTol',absatol);
 
             gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
-            A(i,j+N)   = -l * integral(gg,0,1,'ArrayValued',true);
+            A(i,j+N)   = -l * integral(gg,0,1,'ArrayValued',true,'RelTol',relatol,'AbsTol',absatol);
 
             g          = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k2);
-            A(i+N,j)   = l * integral(g,0,1,'ArrayValued',true);
+            A(i+N,j)   = l * integral(g,0,1,'ArrayValued',true,'RelTol',relatol,'AbsTol',absatol);
 
             gg         = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k2);
-            A(i+N,j+N) = -l * integral(gg,0,1,'ArrayValued',true);
+            A(i+N,j+N) = -l * integral(gg,0,1,'ArrayValued',true,'RelTol',relatol,'AbsTol',absatol);
         end
     end
 end
@@ -91,8 +93,9 @@ for i = 1:oN
         g  = @(m) green(rpnl,rpnu,0.5,rnl,rnu,m,k1);
         gg = @(m) gradg(rpnl,rpnu,0.5,rnl,rnu,m,nhat,k1);
 
-        farfield(i) = farfield(i) - l * (x(j) * integral(g,0,1,"ArrayValued",true) - ...
-            x(j+N) * integral(gg,0,1,"ArrayValued",true));
+        farfield(i) = farfield(i) - l * (x(j) * ...
+            integral(g,0,1,"ArrayValued",true,'RelTol',relatol,'AbsTol',absatol) - ...
+            x(j+N) * integral(gg,0,1,"ArrayValued",true,'RelTol',relatol,'AbsTol',absatol));
     end
 %     farfield(i) = farfield(i) + Ei;
 end
