@@ -139,14 +139,14 @@ end
 
 %%gauss quadrature
 function y = gaussquad(f,n)
-    wt = zeros(n,1);
-    xi = zeros(n,1);
+%     wt = zeros(n,1);
+%     xi = zeros(n,1);
     if n == 1
         wt(1)  = 1; 
         xi(1) = 1;
     elseif n == 2
-        xi(1) = (1-1/sqrt(3))/2;
-        xi(2) = (1+1/sqrt(3))/2;
+        xi(1) = (1 - 1/sqrt(3))/2;
+        xi(2) = (1 + 1/sqrt(3))/2;
         wt(1) = 0.5;
         wt(2) = 0.5;
     end
